@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>BGN Kalkulyator</title>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="assets/js/bootstrap.bundle.min.js"></script>
+  <script src="lib/vue.js"></script>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <button type="button" id="openBgnModal" class="btn btn-primary position-relative" data-bs-toggle="modal" data-bs-target="#bgnCalculatorModal">
+              BGN Kalkulyator
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Modal -->
+  <div class="modal fade" id="bgnCalculatorModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" id="bgnCalculator">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">BGN Kalkulyator</h5>
+          <div class="d-none d-md-flex d-flex flex-wrap col-lg-9 justify-content-around" id="someInfo">
+            <span class="badge rounded-pill text-bg-info mx-1 mt-1">{{getDTI}}</span>
+            <span class="badge rounded-pill text-bg-warning mx-1 mt-1">{{getYasayishMin}}</span>
+          </div>
+          <button type="button" id="closeBgnModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="calculator">
+            <div class="d-flex flex-column">
+              <div class="d-flex flex-wrap">
+                <span v-for="tag in aviableTags" :key="tag.id" class="badge rounded-pill bg-dark m-1">{{tag.title}}
+                  <i v-if="tag.category != 0" @click="tag.isActive = 0" style="cursor: pointer;" class="ml-2 bi bi-x"></i>
+                </span>
+                <template v-if="otherTags.filter(v => !v.isActive).length > 0">
+                  <button type="button" class="badge rounded-pill text-bg-secondary m-1 btn btn-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Əlavə et
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li v-for="tag in otherTags.filter(v => !v.isActive)" :key="tag.id">
+                      <button @click="tag.isActive ^= true" class="dropdown-item mt-1" :class="tag.isActive ? 'active' : false">{{tag.title}}</button>
+                    </li>
+                  </ul>
+                </template>
+              </div>
+              <div class="calculator-display">
+                <div class="col-12">
+                  <div class="d-flex flex-wrap justify-content-end">
+                    <div class="result ml-2 col-3" v-for="(tag, index) in aviableTags" :key="index" :class = "tag.computed == 'anuniet' ? 'mainCalc' : 'otherCalc'">
+                      <p class="type">{{tag.title}}</p>
+                      <p class="calc">{{eval(tag.computed)}}</p>
+                    </div>
+                  </div>
+                  <div class="result">
+                    <p class="type">Kredit</p>
+                    <p class="calc mb-0">{{calcCredit}}</p>
+                  </div>
+
+                  <p class="currency-sign">₼</p>
+                </div>
+              </div>
+            </div>
+
+            <form>
+              <div class="row">
+                <div class="col-12 col-md-6 mb-3">
+                  <label for="exampleInputEmail1" class="form-label">Sektor</label>
+                  <select class="form-select" name="sector" v-model="sector">
+                    <option v-for="(s, i) in getSectors" :key="i" :value="i">{{s}}</option>
+                  </select>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                  <label for="exampleInputEmail1" class="form-label">Əmək haqqı</label>
+                  <div class="input-group">
+                    <input class="form-control" type="number" name="income" v-model="income">
+                    <select class="input-group-text" name="sector" v-model="incomeType">
+                      <option v-for="(s, i) in getIncomeType" :key="i" :value="i">{{s}}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                  <label for="exampleInputEmail1" class="form-label">Kreditin müddəti (ay)</label>
+                  <input class="form-control" type="number" name="income" v-model="term">
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                  <label for="exampleInputEmail1" class="form-label">İllik faiz dərəcəsi</label>
+                  <input class="form-control" type="number" name="income" v-model="interestRate">
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="app">
+      <form>
+        <div class="row">
+          <!-- <div class="col-12 col-md-6 mb-3">
+            <label for="exampleInputEmail1" class="form-label">Sektor</label>
+            <select class="form-select" name="sector" v-model="sector">
+              <option v-for="(s, i) in getSectors" :key="i" :value="i">{{s}}</option>
+            </select>
+          </div> -->
+          <div class="col-12 col-md-6 mb-3">
+            <label for="exampleInputEmail1" class="form-label">Əmək haqqı</label>
+            <div class="input-group">
+              <input class="form-control" type="number" name="income" v-model="income">
+              <select class="input-group-text" name="sector" v-model="incomeType">
+                <option v-for="(s, i) in getIncomeType" :key="i" :value="i">{{s}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 mb-3">
+            <label for="exampleInputEmail1" class="form-label">Kreditin müddəti (ay)</label>
+            <input class="form-control" type="number" name="income" v-model="term">
+          </div>
+          <div class="col-12 col-md-6 mb-3">
+            <label for="exampleInputEmail1" class="form-label">İllik faiz dərəcəsi</label>
+            <input class="form-control" type="number" name="income" v-model="interestRate">
+          </div>
+        </div>
+      </form>
+      <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="sectorInfo" class="toast text-bg-dark" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">
+              <div class="row">
+                <div class="col-12">
+                  <span>* Hesablama əmək haqqının <i>{{bgn.getSectors[bgn.sector]}}</i> sektoruna uyğun aparılmışdır.</span>
+                </div>
+                <div class="col-12 text-end">
+                  <button data-bs-toggle="modal" data-bs-target="#bgnCalculatorModal" class="btn btn-sm btn-primary">Sektoru dəyiş</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="anuniet" class="toast text-bg-dark" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">
+              <div class="row">
+                <div class="col-12">MBNP üzrə hesablanan anuniet:</div>
+                <div class="col-12 text-end calc">{{bgn.anuniet.toFixed(2)}} ₼</div>
+              </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+          </div>
+        </div>
+        <div id="calcCredit" class="toast text-bg-dark" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">
+
+              <div class="row">
+                <div class="col-12">MBNP üzrə hesablanan kredit:</div>
+                <div class="col-12 text-end calc">{{bgn.calcCredit}} ₼</div>
+              </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="sketch.js"></script>
+
+</body>
+
+</html>

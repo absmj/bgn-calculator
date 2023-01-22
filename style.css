@@ -1,0 +1,93 @@
+/* BGN Calculator css */
+
+@font-face {
+  font-family: "JB R";
+  src: url("/assets/fonts/JetBrainsMono-Regular.woff2");
+}
+
+@font-face {
+  font-family: "JB M";
+  src: url("/assets/fonts/JetBrainsMono-Medium.woff2");
+}
+
+@font-face {
+  font-family: "JB L";
+  src: url("/assets/fonts/JetBrainsMono-Light.woff2");
+}
+
+.calculator-display {
+  display: flex;
+  padding: .15em;
+  margin-bottom: .56em;
+  align-content: stretch;
+  /* max-height: 50vh;
+  overflow-y: auto; */
+  flex-wrap: wrap;
+  border-bottom: .12em solid rgba(0, 0, 0, .10);
+}
+
+.currency-sign {
+  font-family: "JB R";
+  font-size: .86em;
+  padding: 0; margin: 0;
+  text-align: right;
+}
+
+.result {
+  text-align: end;
+}
+
+.type {
+  padding: 0;
+  margin: 0;
+  width: 95%;
+  margin-left: auto;
+  border-bottom: .12em solid rgba(0, 0, 0, .05);
+}
+
+.calc {
+  font-family: "JB R";
+  font-size: 1.8em;
+}
+
+#someInfo {
+  /* border-bottom: .12em solid rgba(0, 0, 0, .05);
+  padding-bottom: .45em; */
+}
+
+.mainCalc {
+  order: 100;
+}
+
+.otherCalc {
+  line-height: 2;
+}
+
+.otherCalc > .type {
+  font-size: .76em;
+}
+
+.otherCalc > .calc {
+  font-size: .88em;
+}
+
+#bgnCalculatorAlert {
+  animation: alert 0.5s ease 10 alternate-reverse;
+}
+
+.calculator {
+  /* max-height: 80vh; */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@keyframes alert {
+  from {
+    /* opacity: 0; */
+    box-shadow: 0;
+  }
+  to {
+    /* opacity: 1; */
+    box-shadow: inset 0 0 60px rgb(255, 38, 0), 0 0 35px rgb(255, 0, 0);
+  }
+}
