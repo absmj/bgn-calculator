@@ -2,17 +2,17 @@
 
 @font-face {
   font-family: "JB R";
-  src: url("/assets/fonts/JetBrainsMono-Regular.woff2");
+  src: url("assets/fonts/JetBrainsMono-Regular.woff2");
 }
 
 @font-face {
   font-family: "JB M";
-  src: url("/assets/fonts/JetBrainsMono-Medium.woff2");
+  src: url("assets/fonts/JetBrainsMono-Medium.woff2");
 }
 
 @font-face {
   font-family: "JB L";
-  src: url("/assets/fonts/JetBrainsMono-Light.woff2");
+  src: url("assets/fonts/JetBrainsMono-Light.woff2");
 }
 
 .calculator-display {
